@@ -2,6 +2,9 @@ import serial
 import time
 
 
+ZERO_POS = 62170
+TICKS_PER_DEG = 143360 / 360
+
 class Polarizer:
 
     # TODO: support multiple polarizers on the same bus
@@ -151,6 +154,10 @@ class Polarizer:
             return -1
 
     def move_absolute(self, position, blocking=True):
+        ticks = int(position*TICKS_PER_DEG + ZERO_POS)
+        self.move_absolute_ticks(ticks, blocking)
+
+    def move_absolute_ticks(self, position, blocking=True):
         command_id = 'ma'
         hex_data = hex(position)[2:]
         message_length = 8
@@ -161,7 +168,7 @@ class Polarizer:
         else:
             return -1
 
-    def move_relative(self, amount, blocking=True):
+    def move_relative_ticks(self, amount, blocking=True):
         command_id = 'mr'
         hex_data = hex(amount)[2:]
         message_length = 8
